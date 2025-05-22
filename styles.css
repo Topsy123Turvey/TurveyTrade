@@ -1,0 +1,207 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5; /* Light grey backdrop */
+    color: #333; /* Softer text */
+}
+
+h1 {
+    color: #1a3c34; /* Dark teal - SA vibe */
+    text-align: center;
+    margin: 20px 0;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #2e5d55; /* Lighter teal */
+    margin: 30px 0 15px;
+    font-size: 1.8em;
+    border-bottom: 2px solid #d4a017; /* Gold underline */
+    padding-bottom: 5px;
+}
+
+h3 {
+    color: #3a7b72; /* Matching teal */
+    margin: 20px 0 10px;
+    font-size: 1.4em;
+}
+
+p {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+/* Listings Layout */
+.listings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.listing {
+    background: #fafafa; /* Off-white card */
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+}
+
+.listing:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Hover lift */
+}
+
+.listing img {
+    max-width: 100%;
+}
+
+.listing h4 {
+    margin: 0 0 10px;
+    color: #2e5d55;
+}
+
+/* Feedback */
+.feedback {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.feedback-item {
+    background: #fafafa; /* Off-white card */
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+}
+
+.feedback-item:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.feedback-item p {
+    margin: 5px 0;
+}
+
+.feedback-item strong {
+    color: #333;
+}
+
+/* Forms */
+form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff; /* White card */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="number"], input[type="email"], textarea, select {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical; /* Optional: allows vertical resize only */
+}
+
+/* Buttons */
+input[type="submit"], .paypal-btn, .report-btn {
+    background: #d4a017; /* Gold default */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+input[type="submit"]:hover, .paypal-btn:hover, .report-btn:hover {
+    background: #b88c12; /* Darker gold */
+}
+
+.paypal-btn {
+    background: #0070ba; /* PayPal blue */
+}
+
+.paypal-btn:hover {
+    background: #005ea6;
+}
+
+.report-btn {
+    background: #e63946; /* Red for warning */
+}
+
+.report-btn:hover {
+    background: #d00000;
+}
+
+.whatsapp-btn {
+    display: inline-block;
+    background: #25D366; /* WhatsApp green */
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.whatsapp-btn:hover {
+    background: #20b958;
+}
+
+/* Profile Container */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Links */
+a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #d4a017; /* Gold */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #b88c12; /* Darker gold */
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background: #1a3c34; /* Teal from your theme */
+    color: white;
+}
+tr:nth-child(even) {
+    background: #f9f9f9; /* Light grey for rows */
+}
