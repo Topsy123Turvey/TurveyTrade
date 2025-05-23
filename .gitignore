@@ -1,0 +1,7 @@
+# VS Code
+.vscode/
+
+# PHP/MySQL
+*.log
+vendor/
+*.env
