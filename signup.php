@@ -1,10 +1,8 @@
-
-     <?php
+<?php
 // Enable error logging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-file_put_contents('php_errors.log', '');
 ini_set('log_errors', 1);
 ini_set('error_log', 'php_errors.log');
 
@@ -23,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     mysqli_close($conn);
 }
+include 'header.php';
 ?>
-<?php include 'header.php'; ?>
 <main>
     <h2>Sign Up</h2>
     <form action="signup.php" method="POST">
