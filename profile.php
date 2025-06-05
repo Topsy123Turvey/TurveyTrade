@@ -1,75 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Profile - TurveyTrade</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="profile-container">
-        <h1>Your Profile - TurveyTrade</h1>
-        <?php
-        include 'db_connect.php';
 
-        if (isset($_GET['user_id'])) {
-            $user_id = $_GET['user_id'];
+     <?php
+     // Enable error logging
+     ini_set('display_errors', 1);
+     ini_set('display_startup_errors', 1);
+     error_reporting(E_ALL);
+     file_put_contents('php_errors.log', '');
+     ini_set('log_errors', 1);
+     ini_set('error_log', 'php_errors.log');
 
-            // User Info
-            $sql = "SELECT name, city, email FROM users WHERE id = '$user_id'";
-            $result = mysqli_query($conn, $sql);
-            if (mysqli_num_rows($result) > 0) {
-                $user = mysqli_fetch_assoc($result);
-                echo "<h2>Welcome, " . $user['name'] . "</h2>";
-                echo "<p>City: " . $user['city'] . "</p>";
-                echo "<p>Email: " . $user['email'] . "</p>";
-            } else {
-                echo "<p>User not found!</p>";
-            }
-
-            // Listings
-            echo "<h3>Your Listings</h3>";
-            $sql = "SELECT name, price, image FROM products WHERE user_id = '$user_id'";
-            $result = mysqli_query($conn, $sql);
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<div class='listing'>";
-                    echo "<h4>" . $row['name'] . "</h4>";
-                    echo "<p>Price: R" . $row['price'] . "</p>";
-                    echo "<img src='" . $row['image'] . "' alt='" . $row['name'] . "' width='100'>";
-                    echo "</div>";
-                }
-            } else {
-                echo "<p>No listings yet!</p>";
-            }
-
-            // Feedback Received
-            echo "<h3>Feedback Received</h3>";
-            $sql = "SELECT f.seller_rating, f.product_rating, f.comment, p.name AS product, u.name AS buyer
-                    FROM feedback f
-                    JOIN products p ON f.product_id = p.id
-                    JOIN users u ON f.user_id = u.id
-                    WHERE p.user_id = '$user_id'";
-            $result = mysqli_query($conn, $sql);
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<div class='feedback-item'>";
-                    echo "<p><strong>" . $row['buyer'] . "</strong> on " . $row['product'] . ":</p>";
-                    echo "<p>Seller Rating: " . $row['seller_rating'] . "/5</p>";
-                    echo "<p>Product Rating: " . $row['product_rating'] . "/5</p>";
-                    echo "<p>Comment: " . $row['comment'] . "</p>";
-                    echo "</div>";
-                }
-            } else {
-                echo "<p>No feedback received yet!</p>";
-            }
-
-            mysqli_close($conn);
-        } else {
-            echo "<p>Please enter a User ID!</p>";
-        }
-        ?>
-        <p><a href="index.php">Back to Home</a></p>
-    </div>
-</body>
-</html>
+     require 'db_connect.php';
+     $user = null;
+     if (isset($_GET['user_id'])) {
+         $user_id = mysqli_real_escape_string($conn, $_GET['user_id']);
+         $sql = "SELECT name, city, email FROM users WHERE id = '$user_id'";
+         $result = mysqli_query($conn, $sql);
+         if ($result && mysqli_num_rows($result) > 0) {
+             $user = mysqli_fetch_assoc($result);
+         }
+         mysqli_free_result($result);
+         mysqli_close($conn);
+     }
+     ?>
+     <?php include 'header.php'; ?>
+     <main>
+         <h2>Your Profile</h2>
+         <form action="profile.php" method="GET">
+             <label for="user_id">Enter Your User ID:</label>
+             <input type="number" id="user_id" name="user_id" required><br><br>
+             <input type="submit" value="View Profile">
+         </form>
+         <?php if ($user): ?>
+             <h3>Profile Details</h3>
+             <p>Name: <?php echo htmlspecialchars($user['name']); ?></p>
+             <p>City: <?php echo htmlspecialchars($user['city']); ?></p>
+             <p>Email: <?php echo htmlspecialchars($user['email']); ?></p>
+         <?php elseif (isset($_GET['user_id'])): ?>
+             <p>No user found.</p>
+         <?php endif; ?>
+     </main>
+     </body>
+     </html>
+     
