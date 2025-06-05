@@ -1,13 +1,82 @@
+
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
+    line-height: 1.6;
     padding: 20px;
     background: #f5f5f5; /* Light grey backdrop */
     color: #333; /* Softer text */
 }
 
+/* Header and Hamburger Menu */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a3c34; /* Dark teal - SA vibe */
+    padding: 10px 20px;
+    color: white;
+}
+
+header h1 {
+    font-size: 24px;
+}
+
+.hamburger {
+    display: block;
+    cursor: pointer;
+}
+
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.nav-menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #1a3c34; /* Match header */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.nav-menu.active {
+    display: block;
+}
+
+.nav-menu ul {
+    list-style: none;
+}
+
+.nav-menu li {
+    margin: 10px 0;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-menu a:hover {
+    text-decoration: underline;
+}
+
+/* Headings */
 h1 {
-    color: #1a3c34; /* Dark teal - SA vibe */
+    color: #1a3c34; /* Dark teal */
     text-align: center;
     margin: 20px 0;
     font-size: 2.5em;
@@ -27,6 +96,11 @@ h3 {
     font-size: 1.4em;
 }
 
+h4 {
+    margin: 0 0 10px;
+    color: #2e5d55;
+}
+
 p {
     margin: 8px 0;
     line-height: 1.5;
@@ -38,6 +112,7 @@ p {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    margin-top: 20px;
 }
 
 .listing {
@@ -57,11 +132,6 @@ p {
 
 .listing img {
     max-width: 100%;
-}
-
-.listing h4 {
-    margin: 0 0 10px;
-    color: #2e5d55;
 }
 
 /* Feedback */
@@ -117,7 +187,7 @@ input[type="text"], input[type="number"], input[type="email"], textarea, select 
 }
 
 textarea {
-    resize: vertical; /* Optional: allows vertical resize only */
+    resize: vertical; /* Allows vertical resize only */
 }
 
 /* Buttons */
@@ -153,11 +223,13 @@ input[type="submit"]:hover, .paypal-btn:hover, .report-btn:hover {
 
 .whatsapp-btn {
     display: inline-block;
-    background: #25D366; /* WhatsApp green */
+    background: #25d366; /* WhatsApp green */
     color: white;
     padding: 8px 16px;
     text-decoration: none;
     margin-top: 10px;
+    margin-left: 10px;
+    border-radius: 4px;
 }
 
 .whatsapp-btn:hover {
@@ -187,21 +259,25 @@ a:hover {
     color: #b88c12; /* Darker gold */
 }
 
+/* Tables */
 table {
     border-collapse: collapse;
     width: 100%;
     max-width: 800px;
     margin: 20px auto;
 }
+
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
 }
+
 th {
-    background: #1a3c34; /* Teal from your theme */
+    background: #1a3c34; /* Teal */
     color: white;
 }
+
 tr:nth-child(even) {
     background: #f9f9f9; /* Light grey for rows */
 }
