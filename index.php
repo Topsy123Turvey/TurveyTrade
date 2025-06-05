@@ -9,18 +9,6 @@ ini_set('error_log', 'php_errors.log');
 
 // Include database connection
 require 'db_connect.php';
-
-// Temporary test query to verify database connection
-$result = mysqli_query($conn, "SELECT * FROM products LIMIT 1");
-if ($result) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "Test Product: " . $row['name'] . "<br>";
-    }
-    mysqli_free_result($result); // Free result set
-} else {
-    error_log("Test query failed: " . mysqli_error($conn));
-    echo "Error fetching test data.<br>";
-}
 ?>
 
 <!DOCTYPE html>
