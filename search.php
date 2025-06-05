@@ -44,19 +44,19 @@ require 'db_connect.php';
         if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<div class='listing'>";
-                echo "<h2>" . htmlspecialchars($row['name']) . "</h2>";
+                echo "<h2>" . htmlspecialchars($row['name'] ?? '') . "</h2>";
                 echo "<p>Price: R" . number_format($row['price'], 2) . "</p>";
-                echo "<p>Seller: " . htmlspecialchars($row['seller']) . " (" . htmlspecialchars($row['city']) . ")</p>";
-                echo "<img src='" . htmlspecialchars($row['image'] ?? '') . "' alt='" . htmlspecialchars($row['name']) . "' width='100'>";
+                echo "<p>Seller: " . htmlspecialchars($row['seller'] ?? '') . " (" . htmlspecialchars($row['city'] ?? '') . ")</p>";
+                echo "<img src='" . htmlspecialchars($row['image'] ?? '') . "' alt='" . htmlspecialchars($row['name'] ?? '') . "' width='100'>";
                 echo "<form action='https://www.sandbox.paypal.com/cgi-bin/webscr' method='post' target='_blank'>";
                 echo "<input type='hidden' name='cmd' value='_xclick'>";
                 echo "<input type='hidden' name='business' value='your_sandbox_email@example.com'>";
-                echo "<input type='hidden' name='item_name' value='" . htmlspecialchars($row['name']) . "'>";
+                echo "<input type='hidden' name='item_name' value='" . htmlspecialchars($row['name'] ?? '') . "'>";
                 echo "<input type='hidden' name='amount' value='" . $row['price'] . "'>";
                 echo "<input type='hidden' name='currency_code' value='ZAR'>";
                 echo "<input type='submit' value='Buy Now' class='paypal-btn'>";
                 echo "</form>";
-                echo "<a href='https://wa.me/" . htmlspecialchars($row['phone']) . "?text=Hi%20" . htmlspecialchars($row['seller']) . ",%20I’m%20interested%20in%20your%20" . htmlspecialchars($row['name']) . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
+                echo "<a href='https://wa.me/" . htmlspecialchars($row['phone'] ?? '') . "?text=Hi%20" . htmlspecialchars($row['seller'] ?? '') . ",%20I’m%20interested%20in%20your%20" . htmlspecialchars($row['name'] ?? '') . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
                 echo "</div>";
             }
             mysqli_free_result($result);
