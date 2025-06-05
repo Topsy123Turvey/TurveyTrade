@@ -1,3 +1,28 @@
+<?php
+// Enable error logging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+file_put_contents('php_errors.log', '');
+ini_set('log_errors', 1);
+ini_set('error_log', 'php_errors.log');
+
+// Include database connection
+require 'db_connect.php';
+
+// Temporary test query to verify database connection
+$result = mysqli_query($conn, "SELECT * FROM products LIMIT 1");
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "Test Product: " . $row['name'] . "<br>";
+    }
+    mysqli_free_result($result); // Free result set
+} else {
+    error_log("Test query failed: " . mysqli_error($conn));
+    echo "Error fetching test data.<br>";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +93,6 @@
     <h2>Recent Feedback</h2>
     <div class="feedback">
         <?php
-        include 'db_connect.php';
         $sql = "SELECT f.seller_rating, f.product_rating, f.comment, 
                        u.name AS buyer, p.name AS product
                 FROM feedback f
@@ -76,24 +100,23 @@
                 JOIN products p ON f.product_id = p.id";
         $result = mysqli_query($conn, $sql);
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<div class='feedback-item'>";
-                echo "<p><strong>" . $row['buyer'] . "</strong> on " . $row['product'] . ":</p>";
+                echo "<p><strong>" . htmlspecialchars($row['buyer']) . "</strong> on " . htmlspecialchars($row['product']) . ":</p>";
                 echo "<p>Seller: " . $row['seller_rating'] . "/5</p>";
                 echo "<p>Product: " . $row['product_rating'] . "/5</p>";
-                echo "<p>Comment: " . $row['comment'] . "</p>";
+                echo "<p>Comment: " . htmlspecialchars($row['comment']) . "</p>";
                 echo "</div>";
             }
+            mysqli_free_result($result);
         } else {
             echo "<p>No feedback yet!</p>";
         }
-        mysqli_close($conn);
         ?>
     </div>
     <div class="listings">
         <?php
-        include 'db_connect.php';
         $search = isset($_GET['search']) ? $_GET['search'] : '';
         $city = isset($_GET['city']) ? $_GET['city'] : '';
         
@@ -103,10 +126,10 @@
         
         $conditions = [];
         if ($search) {
-            $conditions[] = "p.name LIKE '%$search%'";
+            $conditions[] = "p.name LIKE '%" . mysqli_real_escape_string($conn, $search) . "%'";
         }
         if ($city) {
-            $conditions[] = "u.city LIKE '%$city%'";
+            $conditions[] = "u.city LIKE '%" . mysqli_real_escape_string($conn, $city) . "%'";
         }
         if (!empty($conditions)) {
             $sql .= " WHERE " . implode(' AND ', $conditions);
@@ -114,37 +137,32 @@
         
         $result = mysqli_query($conn, $sql);
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<div class='listing'>";
-                echo "<h2>" . $row['name'] . "</h2>";
-                echo "<p>Price: R" . $row['price'] . "</p>";
-                echo "<p>Seller: " . $row['seller'] . " (" . $row['city'] . ")</p>";
-                echo "<img src='" . $row['image'] . "' alt='" . $row['name'] . "' width='100'>";
+                echo "<h2>" . htmlspecialchars($row['name']) . "</h2>";
+                echo "<p>Price: R" . number_format($row['price'], 2) . "</p>";
+                echo "<p>Seller: " . htmlspecialchars($row['seller']) . " (" . htmlspecialchars($row['city']) . ")</p>";
+                echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "' width='100'>";
                 echo "<form action='https://www.sandbox.paypal.com/cgi-bin/webscr' method='post' target='_blank'>";
                 echo "<input type='hidden' name='cmd' value='_xclick'>";
                 echo "<input type='hidden' name='business' value='your_sandbox_email@example.com'>";
-                echo "<input type='hidden' name='item_name' value='" . $row['name'] . "'>";
+                echo "<input type='hidden' name='item_name' value='" . htmlspecialchars($row['name']) . "'>";
                 echo "<input type='hidden' name='amount' value='" . $row['price'] . "'>";
                 echo "<input type='hidden' name='currency_code' value='ZAR'>";
                 echo "<input type='submit' value='Buy Now' class='paypal-btn'>";
                 echo "</form>";
-                echo "<a href='https://wa.me/" . $row['phone'] . "?text=Hi%20" . $row['seller'] . ",%20I’m%20interested%20in%20your%20" . $row['name'] . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
+                echo "<a href='https://wa.me/" . htmlspecialchars($row['phone']) . "?text=Hi%20" . htmlspecialchars($row['seller']) . ",%20I’m%20interested%20in%20your%20" . htmlspecialchars($row['name']) . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
                 echo "</div>";
             }
+            mysqli_free_result($result);
         } else {
             echo "No listings found!";
         }
+        
+        // Close connection
         mysqli_close($conn);
         ?>
     </div>
-    <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-file_put_contents('php_errors.log', '');
-ini_set('log_errors', 1);
-ini_set('error_log', 'php_errors.log');
-?>
 </body>
 </html>
