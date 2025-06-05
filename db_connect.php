@@ -2,7 +2,7 @@
 $host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $user = getenv('MYSQLUSER') ?: 'root';
 $pass = getenv('MYSQLPASSWORD') ?: 'AkucHpkwrWGxDwUnVicCKAIyoKLxOMtL';
-$db = getenv('MYSQLDATABASE') ?: 'c2c_db';
+$db = 'c2c_db';
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 if (!$conn) {
