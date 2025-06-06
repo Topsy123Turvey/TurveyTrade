@@ -24,22 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require 'db_connect.php';
     $user_id = mysqli_real_escape_string($conn, $_POST['user_id']);
     $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $price = mysqli_real_escape_string($conn, $_POST['price']);
+    $price = $_POST['price'];
     $image_url = '';
+
+    error_log("POST data: user_id=$user_id, name=$name, price=$price");
+    error_log("FILES array: " . print_r($_FILES, true));
 
     if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
         try {
-            $upload = (new UploadApi())->upload($_FILES['image']['tmp_name']);
+            $upload = (new UploadApi())->upload($_FILES['image']['tmp_name'], [
+                'folder' => 'turveytrade'
+            ]);
             $image_url = $upload['secure_url'];
+            error_log("Cloudinary upload success: $image_url");
         } catch (Exception $e) {
             error_log("Cloudinary upload failed: " . $e->getMessage());
             echo "Error uploading image: " . htmlspecialchars($e->getMessage());
             exit();
         }
+    } else {
+        error_log("Image upload error code: " . ($_FILES['image']['error'] ?? 'No file uploaded'));
+        echo "Please upload a valid image (error code: " . ($_FILES['image']['error'] ?? 'No file') . ")";
+        exit();
     }
 
     $sql = "INSERT INTO products (user_id, name, price, image) VALUES ('$user_id', '$name', '$price', '$image_url')";
     if (mysqli_query($conn, $sql)) {
+        error_log("Product added: $name");
         header("Location: search.php");
         exit();
     } else {
@@ -59,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="text" id="name" name="name" required><br><br>
         <label for="price">Price (R):</label>
         <input type="number" id="price" name="price" step="0.01" required><br><br>
-        <label for="image">Product Image (optional):</label>
-        <input type="file" id="image" name="image" accept="image/*"><br><br>
+        <label for="image">Product Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br><br>
         <input type="submit" value="Add Listing">
     </form>
 </main>
