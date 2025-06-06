@@ -12,8 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $city = mysqli_real_escape_string($conn, $_POST['city']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $sql = "INSERT INTO users (name, city, email, password) VALUES ('$name', '$city', '$email', '$password')";
+    $sql = "INSERT INTO users (name, city, email, phone, password) VALUES ('$name', '$city', '$email', '$phone', '$password')";
     if (mysqli_query($conn, $sql)) {
         $user_id = mysqli_insert_id($conn); // Get the new user's ID
         session_start();
@@ -22,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     } else {
         error_log("Signup failed: " . mysqli_error($conn));
-        echo "Error signing up.";
+        echo "Error signing up: " . htmlspecialchars(mysqli_error($conn));
     }
     mysqli_close($conn);
 }
@@ -37,6 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="text" id="city" name="city" required><br><br>
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
         <input type="submit" value="Sign Up">
