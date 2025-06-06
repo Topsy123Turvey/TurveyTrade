@@ -27,18 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $price = mysqli_real_escape_string($conn, $_POST['price']);
     $image_url = '';
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+    if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
         try {
             $upload = (new UploadApi())->upload($_FILES['image']['tmp_name']);
             $image_url = $upload['secure_url'];
         } catch (Exception $e) {
             error_log("Cloudinary upload failed: " . $e->getMessage());
-            echo "Error uploading image. Please try again.";
+            echo "Error uploading image: " . htmlspecialchars($e->getMessage());
             exit();
         }
-    } else {
-        echo "Please upload an image.";
-        exit();
     }
 
     $sql = "INSERT INTO products (user_id, name, price, image) VALUES ('$user_id', '$name', '$price', '$image_url')";
@@ -47,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     } else {
         error_log("Add product failed: " . mysqli_error($conn));
-        echo "Error adding product.";
+        echo "Error adding product: " . htmlspecialchars(mysqli_error($conn));
     }
     mysqli_close($conn);
 }
@@ -62,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="text" id="name" name="name" required><br><br>
         <label for="price">Price (R):</label>
         <input type="number" id="price" name="price" step="0.01" required><br><br>
-        <label for="image">Product Image:</label>
-        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+        <label for="image">Product Image (optional):</label>
+        <input type="file" id="image" name="image" accept="image/*"><br><br>
         <input type="submit" value="Add Listing">
     </form>
 </main>
