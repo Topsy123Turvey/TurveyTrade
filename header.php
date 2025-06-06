@@ -1,14 +1,6 @@
 <?php
-$is_admin = false;
-if (isset($_SESSION['user_id'])) {
-    require 'db_connect.php';
-    $sql = "SELECT role FROM users WHERE id = '" . mysqli_real_escape_string($conn, $_SESSION['user_id']) . "'";
-    $result = mysqli_query($conn, $sql);
-    if ($result && mysqli_num_rows($result) > 0) {
-        $user = mysqli_fetch_assoc($result);
-        $is_admin = ($user['role'] === 'admin');
-    }
-    mysqli_close($conn);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 ?>
 <!DOCTYPE html>
@@ -39,11 +31,9 @@ if (isset($_SESSION['user_id'])) {
                 <?php } else { ?>
                     <li><a href="logout.php">Logout</a></li>
                 <?php } ?>
-                <?php if ($is_admin) { ?>
-                    <li><a href="admin_users.php">Manage Users</a></li>
-                    <li><a href="admin_products.php">Manage Products</a></li>
-                    <li><a href="admin_feedback.php">Manage Feedback</a></li>
-                <?php } ?>
+                <li><a href="admin_users.php">Manage Users</a></li>
+                <li><a href="admin_products.php">Manage Products</a></li>
+                <li><a href="admin_feedback.php">Manage Feedback</a></li>
             </ul>
         </nav>
         <script>
