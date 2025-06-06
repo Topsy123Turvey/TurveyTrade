@@ -7,6 +7,10 @@ file_put_contents('php_errors.log', '');
 ini_set('log_errors', 1);
 ini_set('error_log', 'php_errors.log');
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
         if (password_verify($password, $user['password'])) {
-            session_start();
             $_SESSION['user_id'] = $user['id'];
             header("Location: index.php");
             exit();

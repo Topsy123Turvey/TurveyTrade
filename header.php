@@ -1,7 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 $is_admin = false;
 if (isset($_SESSION['user_id'])) {
     require 'db_connect.php';
