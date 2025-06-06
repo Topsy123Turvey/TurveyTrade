@@ -47,7 +47,11 @@ require 'db_connect.php';
                 echo "<h2>" . htmlspecialchars($row['name'] ?? '') . "</h2>";
                 echo "<p>Price: R" . number_format($row['price'], 2) . "</p>";
                 echo "<p>Seller: " . htmlspecialchars($row['seller'] ?? '') . " (" . htmlspecialchars($row['city'] ?? '') . ")</p>";
-                echo "<img src='" . htmlspecialchars($row['image'] ?? '') . "' alt='" . htmlspecialchars($row['name'] ?? '') . "' width='100'>";
+                if (!empty($row['image'])) {
+                    echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name'] ?? '') . "' width='100'>";
+                } else {
+                    echo "<p>No image available</p>";
+                }
                 echo "<form action='https://www.sandbox.paypal.com/cgi-bin/webscr' method='post' target='_blank'>";
                 echo "<input type='hidden' name='cmd' value='_xclick'>";
                 echo "<input type='hidden' name='business' value='your_sandbox_email@example.com'>";
