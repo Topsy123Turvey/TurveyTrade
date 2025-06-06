@@ -3,6 +3,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+file_put_contents('php_errors.log', '');
 ini_set('log_errors', 1);
 ini_set('error_log', 'php_errors.log');
 
@@ -11,8 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $city = mysqli_real_escape_string($conn, $_POST['city']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $sql = "INSERT INTO users (name, city, email) VALUES ('$name', '$city', '$email')";
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $sql = "INSERT INTO users (name, city, email, password) VALUES ('$name', '$city', '$email', '$password')";
     if (mysqli_query($conn, $sql)) {
+        $user_id = mysqli_insert_id($conn); // Get the new user's ID
+        session_start();
+        $_SESSION['user_id'] = $user_id;
         header("Location: index.php?signup=success");
         exit();
     } else {
@@ -21,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     mysqli_close($conn);
 }
-include 'header.php';
 ?>
+<?php include 'header.php'; ?>
 <main>
     <h2>Sign Up</h2>
     <form action="signup.php" method="POST">
@@ -32,9 +37,12 @@ include 'header.php';
         <input type="text" id="city" name="city" required><br><br>
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
         <input type="submit" value="Sign Up">
         <div class="g-recaptcha" data-sitekey="6Lf06FYrAAAAAEwp3Q7nJPfsscMET71xbnvqAWjM"></div><br>
     </form>
+    <p>After signing up, your unique ID will be assigned automatically!</p>
 </main>
 </body>
 </html>
