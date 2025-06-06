@@ -1,9 +1,4 @@
 <?php
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Enable error logging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -13,9 +8,10 @@ ini_set('log_errors', 1);
 ini_set('error_log', 'php_errors.log');
 
 require 'db_connect.php';
-session_start();
 
-// Check if user is admin
+// Temporarily disable admin check for screenshots
+/*
+session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -27,6 +23,7 @@ if ($user['role'] != 'admin') {
     header("Location: index.php");
     exit();
 }
+*/
 
 // Delete feedback
 if (isset($_GET['delete'])) {
@@ -60,3 +57,4 @@ $result = mysqli_query($conn, $sql);
 </main>
 </body>
 </html>
+<?php mysqli_close($conn); ?>
