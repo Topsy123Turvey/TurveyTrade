@@ -11,15 +11,21 @@ require 'db_connect.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $user_id = mysqli_real_escape_string($conn, $_POST['user_id']);
-    $sql = "SELECT id FROM users WHERE id = '$user_id'";
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = $_POST['password'];
+    $sql = "SELECT id, password FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
     if ($result && mysqli_num_rows($result) > 0) {
-        $_SESSION['user_id'] = $user_id;
-        header("Location: admin.php");
-        exit();
+        $user = mysqli_fetch_assoc($result);
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            header("Location: index.php");
+            exit();
+        } else {
+            echo "Invalid password.";
+        }
     } else {
-        echo "Invalid User ID.";
+        echo "User not found.";
     }
     mysqli_close($conn);
 }
@@ -28,8 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <main>
     <h2>Login</h2>
     <form action="login.php" method="POST">
-        <label for="user_id">User ID:</label>
-        <input type="number" id="user_id" name="user_id" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
         <input type="submit" value="Login">
     </form>
 </main>
