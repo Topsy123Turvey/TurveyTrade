@@ -1,113 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - TurveyTrade</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Admin - TurveyTrade</h1>
-    <h2>Manage Users</h2>
+<?php
+// Enable error logging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+file_put_contents('php_errors.log', '');
+ini_set('log_errors', 1);
+ini_set('error_log', 'php_errors.log');
 
-    <!-- Add User -->
-    <h3>Add User</h3>
-    <form action="admin.php" method="POST">
-        <label>Name:</label><input type="text" name="name" required><br>
-        <label>Email:</label><input type="email" name="email" required><br>
-        <label>City:</label><input type="text" name="city" required><br>
-        <label>Role:</label><select name="role"><option value="seller">Seller</option><option value="admin">Admin</option></select><br>
-        <input type="submit" name="add" value="Add User">
-    </form>
+require 'db_connect.php';
+session_start();
 
-    <!-- User Table -->
-    <?php
-    include 'db_connect.php';
-
-    if (isset($_POST['add'])) {
-        $name = mysqli_real_escape_string($conn, $_POST['name']);
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
-        $city = mysqli_real_escape_string($conn, $_POST['city']);
-        $role = mysqli_real_escape_string($conn, $_POST['role']);
-        $sql = "INSERT INTO users (name, email, city, role) VALUES ('$name', '$email', '$city', '$role')";
-        mysqli_query($conn, $sql);
-        header("Location: admin.php");
-        exit();
-    }
-
-    if (isset($_GET['delete'])) {
-        $id = mysqli_real_escape_string($conn, $_GET['delete']);
-        $sql = "DELETE FROM users WHERE id = '$id'";
-        mysqli_query($conn, $sql);
-        header("Location: admin.php");
-        exit();
-    }
-
-    $sql = "SELECT id, name, email, city, role FROM users";
-    $result = mysqli_query($conn, $sql);
-    if (mysqli_num_rows($result) > 0) {
-        echo "<table><tr><th>ID</th><th>Name</th><th>Email</th><th>City</th><th>Role</th><th>Actions</th></tr>";
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tr>";
-            echo "<td>{$row['id']}</td><td>{$row['name']}</td><td>{$row['email']}</td><td>{$row['city']}</td><td>{$row['role']}</td>";
-            echo "<td><a href='admin.php?edit={$row['id']}'>Edit</a> | <a href='admin.php?delete={$row['id']}' onclick='return confirm(\"Delete user?\");'>Delete</a></td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-    } else {
-        echo "<p>No users found!</p>";
-    }
-
-    if (isset($_GET['edit'])) {
-        $id = mysqli_real_escape_string($conn, $_GET['edit']);
-        $sql = "SELECT name, email, city, role FROM users WHERE id = '$id'";
-        $result = mysqli_query($conn, $sql);
-        $user = mysqli_fetch_assoc($result);
-        ?>
-        <h3>Edit User ID: <?php echo $id; ?></h3>
-        <form action="admin.php" method="POST">
-            <input type="hidden" name="id" value="<?php echo $id; ?>">
-            <label>Name:</label><input type="text" name="name" value="<?php echo $user['name']; ?>" required><br>
-            <label>Email:</label><input type="email" name="email" value="<?php echo $user['email']; ?>" required><br>
-            <label>City:</label><input type="text" name="city" value="<?php echo $user['city']; ?>" required><br>
-            <label>Role:</label><select name="role">
-                <option value="seller" <?php if ($user['role'] == 'seller') echo 'selected'; ?>>Seller</option>
-                <option value="admin" <?php if ($user['role'] == 'admin') echo 'selected'; ?>>Admin</option>
-            </select><br>
-            <input type="submit" name="update" value="Update User">
-        </form>
+// Check if user is admin (user_id = 1)
+if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != 1) {
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php include 'header.php'; ?>
+<main>
+    <h2>Admin Dashboard</h2>
+    <p>Welcome, Admin! Manage listings below.</p>
+    <h3>All Products</h3>
+    <div class="listings">
         <?php
-        if (isset($_POST['update'])) {
-            $id = mysqli_real_escape_string($conn, $_POST['id']);
-            $name = mysqli_real_escape_string($conn, $_POST['name']);
-            $email = mysqli_real_escape_string($conn, $_POST['email']);
-            $city = mysqli_real_escape_string($conn, $_POST['city']);
-            $role = mysqli_real_escape_string($conn, $_POST['role']);
-            $sql = "UPDATE users SET name='$name', email='$email', city='$city', role='$role' WHERE id='$id'";
-            mysqli_query($conn, $sql);
-            header("Location: admin.php");
-            exit();
-        }
-    }
+        $sql = "SELECT p.id, p.name, p.price, p.image, u.name AS seller 
+                FROM products p 
+                JOIN users u ON p.user_id = u.id";
+        $result = mysqli_query($conn, $sql);
 
-    // User Report
-    ?>
-    <h2>User Report</h2>
-    <?php
-    $sql = "SELECT role, COUNT(*) as count FROM users GROUP BY role";
-    $result = mysqli_query($conn, $sql);
-    if (mysqli_num_rows($result) > 0) {
-        echo "<table><tr><th>Role</th><th>Count</th></tr>";
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tr><td>{$row['role']}</td><td>{$row['count']}</td></tr>";
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<div class='listing'>";
+                echo "<h4>" . htmlspecialchars($row['name']) . "</h4>";
+                echo "<p>Price: R" . number_format($row['price'], 2) . "</p>";
+                echo "<p>Seller: " . htmlspecialchars($row['seller']) . "</p>";
+                if (!empty($row['image'])) {
+                    echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "' width='100'>";
+                }
+                echo "<form action='delete_product.php' method='POST'>";
+                echo "<input type='hidden' name='product_id' value='" . $row['id'] . "'>";
+                echo "<input type='submit' value='Delete' class='report-btn'>";
+                echo "</form>";
+                echo "</div>";
+            }
+            mysqli_free_result($result);
+        } else {
+            echo "<p>No products found.</p>";
         }
-        echo "</table>";
-    } else {
-        echo "<p>No data for report!</p>";
-    }
-    mysqli_close($conn);
-    ?>
+        mysqli_close($conn);
+        ?>
+    </div>
     <p><a href="index.php">Back to Home</a></p>
-    <script src="admin.js"></script>
+</main>
 </body>
 </html>
