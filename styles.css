@@ -281,3 +281,17 @@ th {
 tr:nth-child(even) {
     background: #f9f9f9; /* Light grey for rows */
 }
+
+/* Add to existing styles.css */
+.report-btn {
+    background: #e63946; /* Red for warning */
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.report-btn:hover {
+    background: #d00000; /* Darker red */
+}
