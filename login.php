@@ -1,9 +1,4 @@
 <?php
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Enable error logging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -21,18 +16,24 @@ require 'db_connect.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
+    error_log("Attempting login for email: $email");
     $sql = "SELECT id, password FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
+        error_log("Stored hash for $email: " . $user['password']);
+        error_log("Entered password: $password");
         if (password_verify($password, $user['password'])) {
+            error_log("Password verified for $email");
             $_SESSION['user_id'] = $user['id'];
             header("Location: index.php");
             exit();
         } else {
+            error_log("Password verification failed for $email");
             echo "Invalid password.";
         }
     } else {
+        error_log("User not found: $email");
         echo "User not found.";
     }
     mysqli_close($conn);
