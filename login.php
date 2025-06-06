@@ -8,7 +8,6 @@ ini_set('log_errors', 1);
 ini_set('error_log', 'php_errors.log');
 
 require 'db_connect.php';
-session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
@@ -18,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
         if (password_verify($password, $user['password'])) {
+            session_start();
             $_SESSION['user_id'] = $user['id'];
             header("Location: index.php");
             exit();
