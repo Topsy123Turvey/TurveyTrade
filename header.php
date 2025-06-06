@@ -3,11 +3,11 @@ session_start();
 $is_admin = false;
 if (isset($_SESSION['user_id'])) {
     require 'db_connect.php';
-    $sql = "SELECT role FROM users WHERE id = '{$_SESSION['user_id']}'";
+    $sql = "SELECT role FROM users WHERE id = '" . mysqli_real_escape_string($conn, $_SESSION['user_id']) . "'";
     $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
-    if ($user['role'] == 'admin') {
-        $is_admin = true;
+    if ($result && mysqli_num_rows($result) > 0) {
+        $user = mysqli_fetch_assoc($result);
+        $is_admin = ($user['role'] === 'admin');
     }
     mysqli_close($conn);
 }
