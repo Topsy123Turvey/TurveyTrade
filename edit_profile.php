@@ -14,34 +14,70 @@ $result = mysqli_query($conn, $sql);
 $user = mysqli_fetch_assoc($result);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $city = mysqli_real_escape_string($conn, $_POST['city']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $password = $_POST['password'];
+    if (isset($_POST['update'])) {
+        $name = mysqli_real_escape_string($conn, $_POST['name']);
+        $email = mysqli_real_escape_string($conn, $_POST['email']);
+        $city = mysqli_real_escape_string($conn, $_POST['city']);
+        $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+        $password = $_POST['password'];
 
-    $email_check = "SELECT id FROM users WHERE email = '$email' AND id != '$user_id'";
-    $email_result = mysqli_query($conn, $email_check);
-    if (mysqli_num_rows($email_result) > 0) {
-        $_SESSION['profile_error'] = "This email is already taken. Please choose a different one.";
-        header("Location: edit_profile.php");
-        exit();
-    } else {
-        $sql = "UPDATE users SET name = '$name', email = '$email', city = '$city', phone = '$phone'";
-        if (!empty($password)) {
-            $password_hash = password_hash($password, PASSWORD_DEFAULT);
-            $sql .= ", password = '$password_hash'";
-        }
-        $sql .= " WHERE id = '$user_id'";
-        if (mysqli_query($conn, $sql)) {
-            $_SESSION['user_name'] = $name;
-            $_SESSION['profile_success'] = "Your profile has been updated successfully!";
-            header("Location: index.php");
-            exit();
-        } else {
-            $_SESSION['profile_error'] = "Sorry, we couldn’t update your profile. Please try again.";
+        // Email validation
+        if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $email)) {
+            $_SESSION['profile_error'] = "Please enter a valid email address.";
             header("Location: edit_profile.php");
             exit();
+        }
+
+        // South African phone number validation
+        if (!preg_match('/^(\+27|0)[6-8][0-9]{8}$/', $phone)) {
+            $_SESSION['profile_error'] = "Please enter a valid South African phone number (e.g., +27612345678).";
+            header("Location: edit_profile.php");
+            exit();
+        }
+
+        $email_check = "SELECT id FROM users WHERE email = '$email' AND id != '$user_id'";
+        $email_result = mysqli_query($conn, $email_check);
+        if (mysqli_num_rows($email_result) > 0) {
+            $_SESSION['profile_error'] = "This email is already taken. Please choose a different one.";
+            header("Location: edit_profile.php");
+            exit();
+        } else {
+            $sql = "UPDATE users SET name = '$name', email = '$email', city = '$city', phone = '$phone'";
+            if (!empty($password)) {
+                $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                $sql .= ", password = '$password_hash'";
+            }
+            $sql .= " WHERE id = '$user_id'";
+            if (mysqli_query($conn, $sql)) {
+                $_SESSION['user_name'] = $name;
+                $_SESSION['user_email'] = $email;
+                $_SESSION['user_city'] = $city;
+                $_SESSION['user_phone'] = $phone;
+                $_SESSION['profile_success'] = "Your profile has been updated successfully!";
+                header("Location: index.php");
+                exit();
+            } else {
+                $_SESSION['profile_error'] = "Sorry, we couldn’t update your profile. Please try again.";
+                header("Location: edit_profile.php");
+                exit();
+            }
+        }
+    } elseif (isset($_POST['delete_account'])) {
+        $password = $_POST['password'];
+        $sql = "SELECT password FROM users WHERE id = '$user_id'";
+        $result = mysqli_query($conn, $sql);
+        $user = mysqli_fetch_assoc($result);
+        if (password_verify($password, $user['password'])) {
+            $sql = "DELETE FROM users WHERE id = '$user_id'";
+            if (mysqli_query($conn, $sql)) {
+                session_destroy();
+                header("Location: index.php?deleted=true");
+                exit();
+            } else {
+                $_SESSION['profile_error'] = "Failed to delete account. Please try again.";
+            }
+        } else {
+            $_SESSION['profile_error'] = "Incorrect password. Account deletion failed.";
         }
     }
 }
@@ -78,7 +114,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" placeholder="Enter your phone number"><br><br>
                 <label for="password">New Password (leave blank to keep current):</label>
                 <input type="password" id="password" name="password" placeholder="Enter new password"><br><br>
-                <input type="submit" value="Update Profile">
+                <input type="submit" name="update" value="Update Profile">
+            </form>
+            <h3>Delete Account</h3>
+            <p>Warning: This action is irreversible. All your data will be deleted.</p>
+            <form action="edit_profile.php" method="POST" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                <label for="delete_password">Enter Password to Confirm:</label>
+                <input type="password" id="delete_password" name="password" required><br><br>
+                <input type="submit" name="delete_account" value="Delete Account" class="delete-btn">
             </form>
         </div>
         <p><a href="index.php">Back to Home</a></p>
