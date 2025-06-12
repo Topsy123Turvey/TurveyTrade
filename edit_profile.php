@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -18,11 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $password = $_POST['password'];
 
-    // Check if email is unique, excluding current user
     $email_check = "SELECT id FROM users WHERE email = '$email' AND id != '$user_id'";
     $email_result = mysqli_query($conn, $email_check);
     if (mysqli_num_rows($email_result) > 0) {
-        echo "Email already taken!";
+        $_SESSION['profile_error'] = "This email is already taken. Please choose a different one.";
+        header("Location: edit_profile.php");
+        exit();
     } else {
         $sql = "UPDATE users SET name = '$name', email = '$email', city = '$city', phone = '$phone'";
         if (!empty($password)) {
@@ -31,15 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $sql .= " WHERE id = '$user_id'";
         if (mysqli_query($conn, $sql)) {
-            $_SESSION['user_name'] = $name; // Update session name
-            header("Location: index.php?profile=updated");
+            $_SESSION['user_name'] = $name;
+            $_SESSION['profile_success'] = "Your profile has been updated successfully!";
+            header("Location: index.php");
             exit();
         } else {
-            echo "Error updating profile: " . mysqli_error($conn);
+            $_SESSION['profile_error'] = "Sorry, we couldn’t update your profile. Please try again.";
+            header("Location: edit_profile.php");
+            exit();
         }
     }
 }
-mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,21 +57,32 @@ mysqli_close($conn);
 <body>
     <?php include 'header.php'; ?>
     <main>
-        <h2>Edit Profile</h2>
-        <form action="edit_profile.php" method="POST">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required><br><br>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required><br><br>
-            <label for="city">City:</label>
-            <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($user['city']); ?>" required><br><br>
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>"><br><br>
-            <label for="password">New Password (leave blank to keep current):</label>
-            <input type="password" id="password" name="password"><br><br>
-            <input type="submit" value="Update Profile">
-        </form>
+        <div class="welcome-message">
+            <h2>Update Your Profile</h2>
+            <p>Keep your information up to date to ensure a smooth trading experience.</p>
+        </div>
+        <?php if (isset($_SESSION['profile_error'])) { ?>
+            <p class="error-message"><?php echo htmlspecialchars($_SESSION['profile_error']); ?></p>
+            <?php unset($_SESSION['profile_error']); ?>
+        <?php } ?>
+        <div class="form-container">
+            <h3>Edit Profile</h3>
+            <form action="edit_profile.php" method="POST">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" placeholder="Enter your full name" required><br><br>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" placeholder="Enter your email" required><br><br>
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($user['city']); ?>" placeholder="Enter your city" required><br><br>
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" placeholder="Enter your phone number"><br><br>
+                <label for="password">New Password (leave blank to keep current):</label>
+                <input type="password" id="password" name="password" placeholder="Enter new password"><br><br>
+                <input type="submit" value="Update Profile">
+            </form>
+        </div>
         <p><a href="index.php">Back to Home</a></p>
     </main>
+    <?php mysqli_close($conn); ?>
 </body>
 </html>
