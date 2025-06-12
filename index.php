@@ -1,15 +1,10 @@
-
-<?php if (isset($_SESSION['login_error'])) { ?>
-    <p style="color: red;"><?php echo htmlspecialchars($_SESSION['login_error']); ?></p>
-    <?php unset($_SESSION['login_error']); ?>
-<?php } ?>
-
-
 <?php
-session_start();
+// Start session and include DB connection at the top
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include 'db_connect.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,10 +15,15 @@ include 'db_connect.php';
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
+    <?php include 'header.php'; ?>
     <h1>TurveyTrade</h1>
 
     <?php if (!isset($_SESSION['user_id'])) { ?>
         <p>Please log in or sign up to access TurveyTrade!</p>
+        <?php if (isset($_SESSION['login_error'])) { ?>
+            <p style="color: red;"><?php echo htmlspecialchars($_SESSION['login_error']); ?></p>
+            <?php unset($_SESSION['login_error']); ?>
+        <?php } ?>
 
         <!-- Login Form -->
         <h2>Login</h2>
