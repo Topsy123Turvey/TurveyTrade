@@ -1,15 +1,8 @@
 <?php
 session_start();
 $is_admin = false;
-if (isset($_SESSION['user_id'])) {
-    require 'db_connect.php';
-    $sql = "SELECT role FROM users WHERE id = '{$_SESSION['user_id']}'";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
-    if ($user['role'] == 'admin') {
-        $is_admin = true;
-    }
-    mysqli_close($conn);
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+    $is_admin = $_SESSION['user_role'] == 'admin';
 }
 ?>
 <!DOCTYPE html>
@@ -24,6 +17,13 @@ if (isset($_SESSION['user_id'])) {
 <body>
     <header>
         <h1>TurveyTrade</h1>
+        <div class="profile">
+            <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])) { ?>
+                <div class="profile-icon" title="Logged in as <?php echo htmlspecialchars($_SESSION['user_name']); ?> (ID: <?php echo $_SESSION['user_id']; ?>)">
+                    <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
+                </div>
+            <?php } ?>
+        </div>
         <div class="hamburger">
             <span></span>
             <span></span>
@@ -38,6 +38,7 @@ if (isset($_SESSION['user_id'])) {
                     <li><a href="signup.php">Sign Up</a></li>
                     <li><a href="login.php">Login</a></li>
                 <?php } else { ?>
+                    <li><a href="edit_profile.php">Edit Profile</a></li>
                     <?php if ($is_admin) { ?>
                         <li><a href="admin_users.php">Manage Users</a></li>
                         <li><a href="admin_products.php">Manage Products</a></li>

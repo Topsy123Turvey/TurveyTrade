@@ -1,3 +1,10 @@
+
+<?php if (isset($_SESSION['login_error'])) { ?>
+    <p style="color: red;"><?php echo htmlspecialchars($_SESSION['login_error']); ?></p>
+    <?php unset($_SESSION['login_error']); ?>
+<?php } ?>
+
+
 <?php
 session_start();
 include 'db_connect.php';
