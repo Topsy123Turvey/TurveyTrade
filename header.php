@@ -38,8 +38,8 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 <li><a href="add_product.php">List Item</a></li>
                 <li><a href="feedback.php">View Feedback</a></li>
                 <?php if (!isset($_SESSION['user_id'])) { ?>
-                    <li><a href="signup.php">Sign Up</a></li>
-                    <li><a href="login.php">Login</a></li>
+                    <li><a href="index.php">Sign Up</a></li>
+                    <li><a href="index.php">Login</a></li>
                 <?php } else { ?>
                     <li><a href="edit_profile.php">Edit Profile</a></li>
                     <li><a href="add_feedback.php">Submit Feedback</a></li>
