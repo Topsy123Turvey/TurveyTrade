@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
     error_log("Attempting login for email: $email");
-    $sql = "SELECT id, password FROM users WHERE email = '$email'";
+    $sql = "SELECT id, name, role, password FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
@@ -26,29 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (password_verify($password, $user['password'])) {
             error_log("Password verified for $email");
             $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_role'] = $user['role'];
             header("Location: index.php");
             exit();
         } else {
             error_log("Password verification failed for $email");
-            echo "Invalid password.";
+            $_SESSION['login_error'] = "Invalid password.";
+            header("Location: index.php");
+            exit();
         }
     } else {
         error_log("User not found: $email");
-        echo "User not found.";
+        $_SESSION['login_error'] = "User not found.";
+        header("Location: index.php");
+        exit();
     }
     mysqli_close($conn);
+} else {
+    header("Location: index.php");
+    exit();
 }
 ?>
-<?php include 'header.php'; ?>
-<main>
-    <h2>Login</h2>
-    <form action="login.php" method="POST">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Login">
-    </form>
-</main>
-</body>
-</html>
