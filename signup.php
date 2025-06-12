@@ -1,16 +1,7 @@
 <?php
-// Enable error logging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-file_put_contents('php_errors.log', '');
-ini_set('log_errors', 1);
-ini_set('error_log', 'php_errors.log');
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 require 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -19,9 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $role = 'seller'; // Default role
+    $role = 'seller';
 
-    // Check if email exists
     $sql = "SELECT id FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
@@ -30,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Insert new user
     $sql = "INSERT INTO users (name, city, email, phone, password, role) VALUES ('$name', '$city', '$email', '$phone', '$password', '$role')";
     if (mysqli_query($conn, $sql)) {
         $user_id = mysqli_insert_id($conn);
