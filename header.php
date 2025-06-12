@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $is_admin = false;
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     $is_admin = $_SESSION['user_role'] == 'admin';
@@ -34,11 +36,13 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 <li><a href="index.php">Home</a></li>
                 <li><a href="search.php">Search Listings</a></li>
                 <li><a href="add_product.php">List Item</a></li>
+                <li><a href="feedback.php">View Feedback</a></li>
                 <?php if (!isset($_SESSION['user_id'])) { ?>
                     <li><a href="signup.php">Sign Up</a></li>
                     <li><a href="login.php">Login</a></li>
                 <?php } else { ?>
                     <li><a href="edit_profile.php">Edit Profile</a></li>
+                    <li><a href="add_feedback.php">Submit Feedback</a></li>
                     <?php if ($is_admin) { ?>
                         <li><a href="admin_users.php">Manage Users</a></li>
                         <li><a href="admin_products.php">Manage Products</a></li>
