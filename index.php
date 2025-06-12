@@ -25,6 +25,10 @@ include 'db_connect.php';
                 <p class="error-message"><?php echo htmlspecialchars($_SESSION['login_error']); ?></p>
                 <?php unset($_SESSION['login_error']); ?>
             <?php } ?>
+            <?php if (isset($_SESSION['signup_error'])) { ?>
+                <p class="error-message"><?php echo htmlspecialchars($_SESSION['signup_error']); ?></p>
+                <?php unset($_SESSION['signup_error']); ?>
+            <?php } ?>
             <div class="form-container">
                 <h3>Login</h3>
                 <form action="login.php" method="POST">
@@ -32,6 +36,7 @@ include 'db_connect.php';
                     <input type="email" id="email" name="email" placeholder="Enter your email" required><br><br>
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" placeholder="Enter your password" required><br><br>
+                    <div class="g-recaptcha" data-sitekey="6Lcfbl4rAAAAACjuLDJ8pXd-NclhJ_kl9LTVHfnb"></div><br>
                     <input type="submit" value="Login">
                 </form>
                 <p class="signup-prompt">Not signed up yet? <a href="#" onclick="showSignup()">Click here to sign up!</a></p>
@@ -48,8 +53,8 @@ include 'db_connect.php';
                         <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required><br><br>
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password" placeholder="Choose a secure password" required><br><br>
+                        <div class="g-recaptcha" data-sitekey="6Lcfbl4rAAAAACjuLDJ8pXd-NclhJ_kl9LTVHfnb"></div><br>
                         <input type="submit" value="Sign Up">
-                        <div class="g-recaptcha" data-sitekey="your_site_key_here"></div><br>
                     </form>
                 </div>
             </div>
@@ -61,7 +66,7 @@ include 'db_connect.php';
         <?php } else { ?>
             <div class="welcome-message">
                 <h2>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h2>
-                <p>Ready to trade? Explore the marketplace, list your items, or share your feedback!</p>
+                <p>Your trusted C-2-C marketplace in South Africa. Buy, sell, and trade with confidence.</p>
                 <?php if (isset($_SESSION['signup_success'])) { ?>
                     <p class="success-message"><?php echo htmlspecialchars($_SESSION['signup_success']); ?></p>
                     <?php unset($_SESSION['signup_success']); ?>
@@ -70,69 +75,6 @@ include 'db_connect.php';
                     <p class="success-message"><?php echo htmlspecialchars($_SESSION['feedback_success']); ?></p>
                     <?php unset($_SESSION['feedback_success']); ?>
                 <?php } ?>
-            </div>
-            <div class="form-container">
-                <h3>Search Listings</h3>
-                <form action="search.php" method="GET">
-                    <label for="search">Search by Item Name:</label>
-                    <input type="text" id="search" name="search" placeholder="Enter item name"><br><br>
-                    <label for="city">Filter by City:</label>
-                    <input type="text" id="city" name="city" placeholder="Enter city"><br><br>
-                    <input type="submit" value="Search">
-                </form>
-            </div>
-            <div class="form-container">
-                <h3>List an Item</h3>
-                <form action="add_product.php" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
-                    <label for="name">Item Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Enter item name" required><br><br>
-                    <label for="price">Price (R):</label>
-                    <input type="number" id="price" name="price" step="0.01" placeholder="Enter price" required><br><br>
-                    <label for="image">Upload Image:</label>
-                    <input type="file" id="image" name="image" accept="image/*" required><br><br>
-                    <input type="submit" value="Add Listing">
-                </form>
-            </div>
-            <div class="form-container">
-                <h3>Submit Feedback</h3>
-                <form action="add_feedback.php" method="POST">
-                    <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
-                    <label for="product_id">Product ID:</label>
-                    <input type="number" id="product_id" name="product_id" placeholder="Enter product ID" required><br><br>
-                    <label for="seller_rating">Seller Rating (1–5):</label>
-                    <input type="number" id="seller_rating" name="seller_rating" min="1" max="5" placeholder="4" required><br><br>
-                    <label for="product_rating">Product Rating (1–5):</label>
-                    <input type="number" id="product_rating" name="product_rating" min="1" max="5" placeholder="4" required><br><br>
-                    <label for="comment">Comment:</label>
-                    <textarea id="comment" name="comment" rows="3" placeholder="Share your thoughts"></textarea><br><br>
-                    <input type="submit" value="Submit Feedback">
-                </form>
-            </div>
-            <div class="welcome-message">
-                <h3>Recent Feedback</h3>
-                <p>Check out what our community is saying!</p>
-            </div>
-            <div class="feedback">
-                <?php
-                $sql = "SELECT f.seller_rating, f.product_rating, f.comment, u.name AS buyer, p.name AS product
-                        FROM feedback f
-                        JOIN users u ON f.user_id = u.id
-                        JOIN products p ON f.product_id = p.id";
-                $result = mysqli_query($conn, $sql);
-                if ($result && mysqli_num_rows($result) > 0) {
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<div class='feedback-item'>";
-                        echo "<p><strong>" . htmlspecialchars($row['buyer']) . "</strong> on " . htmlspecialchars($row['product']) . ":</p>";
-                        echo "<p>Seller Rating: " . htmlspecialchars($row['seller_rating']) . "/5</p>";
-                        echo "<p>Product Rating: " . htmlspecialchars($row['product_rating']) . "/5</p>";
-                        echo "<p>Comment: " . htmlspecialchars($row['comment']) . "</p>";
-                        echo "</div>";
-                    }
-                } else {
-                    echo "<p>No feedback yet. Be the first to share your thoughts!</p>";
-                }
-                ?>
             </div>
         <?php } ?>
     </main>
