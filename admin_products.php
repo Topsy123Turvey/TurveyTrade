@@ -1,4 +1,13 @@
 <?php
+
+
+session_start();
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: index.php");
+        exit();
+    }
+    include 'db_connect.php';
+
 // Enable error logging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
