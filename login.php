@@ -32,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } else {
             error_log("Password verification failed for $email");
-            $_SESSION['login_error'] = "Invalid password.";
+            $_SESSION['login_error'] = "Invalid password. Please try again.";
             header("Location: index.php");
             exit();
         }
     } else {
         error_log("User not found: $email");
-        $_SESSION['login_error'] = "User not found.";
+        $_SESSION['login_error'] = "User not found. Please check your email or sign up.";
         header("Location: index.php");
         exit();
     }
