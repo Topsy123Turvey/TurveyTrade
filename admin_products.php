@@ -8,10 +8,9 @@ ini_set('log_errors', 1);
 ini_set('error_log', 'php_errors.log');
 
 require 'db_connect.php';
-
-// Temporarily disable admin check for screenshots
-/*
 session_start();
+
+// Check if user is logged in and is admin
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -23,7 +22,6 @@ if ($user['role'] != 'admin') {
     header("Location: index.php");
     exit();
 }
-*/
 
 // Delete product
 if (isset($_GET['delete'])) {
@@ -57,4 +55,3 @@ $result = mysqli_query($conn, $sql);
 </main>
 </body>
 </html>
-<?php mysqli_close($conn); ?>
