@@ -1,3 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --header-background: #1e1e1e;
+    --accent-color: #4a90e2; /* Deep blue */
+    --secondary-accent: #f5a623; /* Gold */
+    --card-background: #2a2a2a;
+    --border-color: #444;
+    --button-color: #4a90e2;
+    --button-hover: #357abd;
+    --link-color: #4a90e2;
+    --link-hover: #357abd;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,11 +21,11 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
     line-height: 1.6;
     padding: 20px;
-    background: #f5f5f5; /* Light grey backdrop */
-    color: #333; /* Softer text */
+    background: var(--background-color);
+    color: var(--text-color);
 }
 
 /* Header and Hamburger Menu */
@@ -17,13 +33,15 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #1a3c34; /* Dark teal - SA vibe */
+    background-color: var(--header-background);
     padding: 10px 20px;
-    color: white;
+    color: var(--text-color);
+    position: relative;
 }
 
 header h1 {
     font-size: 24px;
+    font-weight: 700;
 }
 
 .hamburger {
@@ -35,7 +53,7 @@ header h1 {
     display: block;
     width: 25px;
     height: 3px;
-    background-color: white;
+    background-color: var(--text-color);
     margin: 5px 0;
     transition: all 0.3s ease;
 }
@@ -45,7 +63,7 @@ header h1 {
     position: absolute;
     top: 60px;
     right: 20px;
-    background-color: #1a3c34; /* Match header */
+    background-color: var(--header-background);
     padding: 10px;
     border-radius: 5px;
 }
@@ -63,40 +81,64 @@ header h1 {
 }
 
 .nav-menu a {
-    color: white;
+    color: var(--text-color);
     text-decoration: none;
     font-size: 16px;
+    transition: color 0.3s ease;
 }
 
 .nav-menu a:hover {
-    text-decoration: underline;
+    color: var(--link-hover);
+}
+
+/* Profile Indicator */
+.profile {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+}
+
+.profile-icon {
+    width: 30px;
+    height: 30px;
+    background-color: #e0e0e0;
+    color: #121212;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 /* Headings */
 h1 {
-    color: #1a3c34; /* Dark teal */
+    color: var(--accent-color);
     text-align: center;
     margin: 20px 0;
-    font-size: 2.5em;
+    font-size: 2.8em;
+    font-weight: 700;
 }
 
 h2 {
-    color: #2e5d55; /* Lighter teal */
+    color: var(--secondary-accent);
     margin: 30px 0 15px;
-    font-size: 1.8em;
-    border-bottom: 2px solid #d4a017; /* Gold underline */
+    font-size: 2em;
+    font-weight: 700;
+    border-bottom: 2px solid var(--secondary-accent);
     padding-bottom: 5px;
 }
 
 h3 {
-    color: #3a7b72; /* Matching teal */
+    color: var(--accent-color);
     margin: 20px 0 10px;
-    font-size: 1.4em;
+    font-size: 1.6em;
+    font-weight: 700;
 }
 
 h4 {
+    color: var(--secondary-accent);
     margin: 0 0 10px;
-    color: #2e5d55;
 }
 
 p {
@@ -114,18 +156,19 @@ p {
 }
 
 .listing {
-    background: #fafafa; /* Off-white card */
-    border: 1px solid #ddd;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     padding: 15px;
     width: 200px;
     text-align: center;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .listing:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Hover lift */
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
 }
 
 .listing img {
@@ -139,17 +182,18 @@ p {
 }
 
 .feedback-item {
-    background: #fafafa; /* Off-white card */
-    border: 1px solid #ddd;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     padding: 15px;
     margin: 10px 0;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .feedback-item:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
 }
 
 .feedback-item p {
@@ -157,7 +201,7 @@ p {
 }
 
 .feedback-item strong {
-    color: #333;
+    color: var(--text-color);
 }
 
 /* Forms */
@@ -165,44 +209,63 @@ form {
     max-width: 400px;
     margin: 20px auto;
     padding: 20px;
-    background: #fff; /* White card */
+    background: var(--card-background);
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 label {
     display: block;
     margin-bottom: 5px;
+    color: var(--text-color);
 }
 
 input[type="text"], input[type="number"], input[type="email"], textarea, select {
     width: 100%;
     padding: 5px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 16px;
+    background-color: #333;
+    color: var(--text-color);
+}
+
+input::placeholder, textarea::placeholder {
+    color: #aaa;
+}
+
+select {
+    background-color: #333;
+    color: var(--text-color);
+}
+
+select option {
+    background-color: #333;
+    color: var(--text-color);
 }
 
 textarea {
-    resize: vertical; /* Allows vertical resize only */
+    resize: vertical;
 }
 
 /* Buttons */
-input[type="submit"], .paypal-btn, .report-btn {
-    background: #d4a017; /* Gold default */
+input[type="submit"], .paypal-btn, .report-btn, .whatsapp-btn {
+    background: var(--button-color);
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
 
-input[type="submit"]:hover, .paypal-btn:hover, .report-btn:hover {
-    background: #b88c12; /* Darker gold */
+input[type="submit"]:hover, .paypal-btn:hover, .report-btn:hover, .whatsapp-btn:hover {
+    background: var(--button-hover);
 }
 
+/* Specific button colors */
 .paypal-btn {
     background: #0070ba; /* PayPal blue */
 }
@@ -220,41 +283,22 @@ input[type="submit"]:hover, .paypal-btn:hover, .report-btn:hover {
 }
 
 .whatsapp-btn {
-    display: inline-block;
     background: #25d366; /* WhatsApp green */
-    color: white;
-    padding: 8px 16px;
-    text-decoration: none;
-    margin-top: 10px;
-    margin-left: 10px;
-    border-radius: 4px;
 }
 
 .whatsapp-btn:hover {
     background: #20b958;
 }
 
-/* Profile Container */
-.profile-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
 /* Links */
 a {
-    display: inline-block;
-    margin-top: 20px;
-    color: #d4a017; /* Gold */
+    color: var(--link-color);
     text-decoration: none;
-    font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 a:hover {
-    color: #b88c12; /* Darker gold */
+    color: var(--link-hover);
 }
 
 /* Tables */
@@ -263,38 +307,31 @@ table {
     width: 100%;
     max-width: 800px;
     margin: 20px auto;
+    background: var(--card-background);
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     padding: 8px;
     text-align: left;
+    color: var(--text-color);
 }
 
 th {
-    background: #1a3c34; /* Teal */
+    background: var(--accent-color);
     color: white;
 }
 
 tr:nth-child(even) {
-    background: #f9f9f9; /* Light grey for rows */
+    background: #222;
 }
 
-/* New styles for the profile indicator */
-.profile {
-    position: absolute;
-    top: 10px;
-    right: 50px;
-}
-
-.profile-icon {
-    width: 30px;
-    height: 30px;
-    background-color: #d4a017; /* Gold to match theme */
-    color: white;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 30px;
-    font-weight: bold;
-    cursor: pointer;
+/* Profile Container */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
