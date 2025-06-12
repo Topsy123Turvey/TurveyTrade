@@ -5,6 +5,18 @@ if (session_status() === PHP_SESSION_NONE) {
 require 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Verify reCAPTCHA
+    $secret_key = '6Lcfbl4rAAAAAMPOxmadfCsJkwDa92GGG4EL2Ds_';
+    $recaptcha_response = $_POST['g-recaptcha-response'];
+    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secret_key}&response={$recaptcha_response}");
+    $recaptcha = json_decode($verify);
+
+    if (!$recaptcha->success) {
+        $_SESSION['login_error'] = "Please complete the reCAPTCHA verification.";
+        header("Location: index.php");
+        exit();
+    }
+
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
     $sql = "SELECT id, name, email, city, phone, join_date, role, password FROM users WHERE email = '$email'";
