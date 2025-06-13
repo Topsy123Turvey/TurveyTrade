@@ -17,9 +17,13 @@ if ($user['role'] != 'admin') {
 
 if (isset($_GET['delete'])) {
     $id = mysqli_real_escape_string($conn, $_GET['delete']);
-    $sql = "DELETE FROM products WHERE id = '$id'";
-    if (mysqli_query($conn, $sql)) {
-        $_SESSION['admin_success'] = "Product deleted successfully.";
+    // Delete associated feedback first
+    $sql_feedback = "DELETE FROM feedback WHERE product_id = '$id'";
+    mysqli_query($conn, $sql_feedback);
+    // Delete product
+    $sql_product = "DELETE FROM products WHERE id = '$id'";
+    if (mysqli_query($conn, $sql_product)) {
+        $_SESSION['admin_success'] = "Product and associated feedback deleted successfully.";
         header("Location: admin_products.php");
         exit();
     } else {
