@@ -49,9 +49,10 @@ include 'db_connect.php';
                 echo "<div class='listings'>";
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<div class='listing'>";
-                    echo "<h4>" . htmlspecialchars($row['name']) . "</h4>";
+                    echo "<h4>" . htmlspecialchars($row['name']) . " (ID: " . htmlspecialchars($row['id']) . ")</h4>";
                     echo "<p>Price: R" . number_format($row['price'], 2) . "</p>";
                     echo "<p>Seller: " . htmlspecialchars($row['seller']) . " (" . htmlspecialchars($row['city']) . ")</p>";
+                    echo "<p>Contact: " . htmlspecialchars($row['phone']) . "</p>";
                     echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "' width='100'>";
                     echo "<form action='https://www.sandbox.paypal.com/cgi-bin/webscr' method='post' target='_blank'>";
                     echo "<input type='hidden' name='cmd' value='_xclick'>";
@@ -61,7 +62,8 @@ include 'db_connect.php';
                     echo "<input type='hidden' name='currency_code' value='ZAR'>";
                     echo "<input type='submit' value='Buy Now' class='paypal-btn'>";
                     echo "</form>";
-                    echo "<a href='https://wa.me/" . htmlspecialchars($row['phone']) . "?text=Hi%20" . htmlspecialchars($row['seller']) . ",%20I’m%20interested%20in%20your%20" . htmlspecialchars($row['name']) . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
+                    echo "<a href='https://wa.me/" . htmlspecialchars(str_replace('+', '', $row['phone'])) . "?text=Hi%20" . urlencode($row['seller']) . ",%20I’m%20interested%20in%20your%20" . urlencode($row['name']) . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
+                    echo "<p><a href='submit_feedback.php?product_id=" . htmlspecialchars($row['id']) . "'>Give Feedback/Rate Product</a></p>";
                     echo "</div>";
                 }
                 echo "</div>";
