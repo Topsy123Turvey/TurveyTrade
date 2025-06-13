@@ -34,8 +34,12 @@ if (isset($_POST['add'])) {
 
 if (isset($_GET['delete'])) {
     $id = mysqli_real_escape_string($conn, $_GET['delete']);
-    $sql = "DELETE FROM users WHERE id = '$id'";
-    if (mysqli_query($conn, $sql)) {
+    // Delete associated products first
+    $sql_products = "DELETE FROM products WHERE user_id = '$id'";
+    mysqli_query($conn, $sql_products);
+    // Delete user
+    $sql_user = "DELETE FROM users WHERE id = '$id'";
+    if (mysqli_query($conn, $sql_user)) {
         $_SESSION['admin_success'] = "User deleted successfully.";
         header("Location: admin_users.php");
         exit();
@@ -95,7 +99,12 @@ if (isset($_GET['delete'])) {
             echo "<table><tr><th>ID</th><th>Name</th><th>Email</th><th>City</th><th>Phone</th><th>Role</th><th>Actions</th></tr>";
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>";
-                echo "<td>{$row['id']}</td><td>" . htmlspecialchars($row['name']) . "</td><td>" . htmlspecialchars($row['email']) . "</td><td>" . htmlspecialchars($row['city']) . "</td><td>" . htmlspecialchars($row['phone']) . "</td><td>" . htmlspecialchars($row['role']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['id'] ?? '') . "</td>";
+                echo "<td>" . htmlspecialchars($row['name'] ?? '') . "</td>";
+                echo "<td>" . htmlspecialchars($row['email'] ?? '') . "</td>";
+                echo "<td>" . htmlspecialchars($row['city'] ?? '') . "</td>";
+                echo "<td>" . htmlspecialchars($row['phone'] ?? '') . "</td>";
+                echo "<td>" . htmlspecialchars($row['role'] ?? '') . "</td>";
                 echo "<td><a href='admin_users.php?edit={$row['id']}'>Edit</a> | <a href='admin_users.php?delete={$row['id']}' onclick='return confirm(\"Are you sure you want to delete this user?\");'>Delete</a></td>";
                 echo "</tr>";
             }
@@ -115,13 +124,13 @@ if (isset($_GET['delete'])) {
                 <form action="admin_users.php" method="POST">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" placeholder="Enter full name" required><br><br>
+                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name'] ?? '') ; ?>" placeholder="Enter full name" required><br><br>
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" placeholder="Enter email" required><br><br>
+                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? '') ; ?>" placeholder="Enter email" required><br><br>
                     <label for="city">City:</label>
-                    <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($user['city']); ?>" placeholder="Enter city" required><br><br>
+                    <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($user['city'] ?? '') ; ?>" placeholder="Enter city" required><br><br>
                     <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" placeholder="Enter phone number"><br><br>
+                    <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? '') ; ?>" placeholder="Enter phone number"><br><br>
                     <label for="role">Role:</label>
                     <select id="role" name="role">
                         <option value="seller" <?php if ($user['role'] == 'seller') echo 'selected'; ?>>Seller</option>
@@ -159,7 +168,7 @@ if (isset($_GET['delete'])) {
         if (mysqli_num_rows($result) > 0) {
             echo "<table><tr><th>Role</th><th>Count</th></tr>";
             while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr><td>" . htmlspecialchars($row['role']) . "</td><td>{$row['count']}</td></tr>";
+                echo "<tr><td>" . htmlspecialchars($row['role'] ?? '') . "</td><td>" . ($row['count'] ?? 0) . "</td></tr>";
             }
             echo "</table>";
         } else {
