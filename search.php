@@ -63,7 +63,7 @@ include 'db_connect.php';
                     echo "<input type='submit' value='Buy Now' class='paypal-btn'>";
                     echo "</form>";
                     echo "<a href='https://wa.me/" . htmlspecialchars(str_replace('+', '', $row['phone'])) . "?text=Hi%20" . urlencode($row['seller']) . ",%20I’m%20interested%20in%20your%20" . urlencode($row['name']) . "' target='_blank' class='whatsapp-btn'>Contact Seller</a>";
-                    echo "<p><a href='submit_feedback.php?product_id=" . htmlspecialchars($row['id']) . "'>Give Feedback/Rate Product</a></p>";
+                    echo "<p><a href='submit_feedback.php?product_id=" . urlencode($row['id']) . "' class='feedback-link'>Give Feedback/Rate Product</a></p>";
                     echo "</div>";
                 }
                 echo "</div>";
