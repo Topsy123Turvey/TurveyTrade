@@ -12,9 +12,9 @@ use Cloudinary\Api\Upload\UploadApi;
 
 Configuration::instance([
     'cloud' => [
-        'cloud_name' => 'your_cloud_name',
-        'api_key' => 'your_api_key',
-        'api_secret' => 'your_api_secret'
+        'cloud_name' => 'dneioykaq', 
+        'api_key' => '572929987655638',   
+        'api_secret' => 'P_9-hEKHUa_SSttJWmAz-jfJnQc' 
     ],
     'url' => ['secure' => true]
 ]);
@@ -28,8 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $image_url = '';
 
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $upload = (new UploadApi())->upload($_FILES['image']['tmp_name']);
-        $image_url = $upload['secure_url'];
+        try {
+            $upload = (new UploadApi())->upload($_FILES['image']['tmp_name']);
+            $image_url = $upload['secure_url'];
+        } catch (Exception $e) {
+            $_SESSION['product_error'] = "Image upload failed: " . $e->getMessage();
+            header("Location: add_product.php");
+            exit();
+        }
     } else {
         $_SESSION['product_error'] = "Please upload a valid image.";
         header("Location: add_product.php");
